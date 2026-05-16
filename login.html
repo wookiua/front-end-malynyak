@@ -17,7 +17,7 @@
 
     <main>
         <h2>User Authorization</h2>
-        <form action="#" method="POST" class="login-form">
+        <form id="auth-form" class="login-form">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
             <br><br>
@@ -28,8 +28,8 @@
             
             <label for="city">Default City:</label>
             <select id="city" name="city">
-                <option value="london">London</option>
-                <option value="paris">Paris</option>
+                <option value="kharkiv">Kharkiv</option>
+                <option value="dnipro">Dnipro</option>
                 <option value="kyiv">Kyiv</option>
             </select>
             <br><br>
@@ -38,12 +38,12 @@
             <textarea id="notes" name="notes" rows="3"></textarea>
             <br><br>
 
-            <label for="avatar">Upload Profile Picture:</label>
-            <input type="file" id="avatar" name="avatar">
-            <br><br>
+            <div id="message-container" style="margin-bottom: 15px; font-weight: bold;"></div>
 
-            <button type="submit">Sign In</button>
+            <button type="button" id="login-btn">Sign In</button>
         </form>
     </main>
+
+    <script src="script.js"></script>
 </body>
 </html>
