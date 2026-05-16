@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City-Site - Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="main-header">
+        <h1>City Information Portal</h1>
+        <nav>
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="login.html" class="nav-link">Login</a>
+            <a href="admin.html" class="nav-link">Admin Dashboard</a>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Explore World Cities</h2>
+            <img src="img/img1.jpg" alt="Kyiv" class="float-left" width="150" height="150">
+            <p class="intro-text">Welcome to City-Site. We provide the latest information and weather updates for major cities around the globe.</p>
+            
+            <img src="img/img2.jpg" alt="Kharkiv" class="float-right" width="150" height="150">
+            <p>Discover historical landmarks, local culture, and real-time climate data to stay informed.</p>
+            <nav aria-label="Main Navigation">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="login.html" class="nav-link">Login</a>
+                <a href="admin.html" class="nav-link">Admin Dashboard</a>
+            </nav>
+
+            <video width="300" controls>
+                <source src="video1.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </section>
+
+        <section>
+            <h2>Featured City Gallery</h2>
+            <img src="img/img3.jpg" alt="Dnipro" width="100" height="100">
+            <img src="img/img4.jpg" alt="Odesa" width="100" height="100">
+            
+            <br><br>
+            <h3>Interactive Navigation Map</h3>
+            <img src="img/img5.jpg" alt="Lviv" usemap="#citymap" width="300" height="200" style="border: 2px solid black;">
+            <map name="citymap">
+                <area shape="rect" coords="0,0,150,200" href="login.html" alt="Go to Login">
+                <area shape="rect" coords="150,0,300,200" href="admin.html" alt="Go to Admin">
+            </map>
+        </section>
+        
+        <div class="floating-banner">Weather Alert: Check updates regularly!</div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 City-Site Project</p>
+    </footer>
+</body>
+</html>
