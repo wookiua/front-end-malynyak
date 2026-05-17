@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City-Site - Weather</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        .weather-widget{
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            margin-top: 20px;
+            border: 2px solid #2c3e50;
+        }
+        .forecast-container{
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .forecast-card{
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            width: 30%;
+            border: 1px solid #ffffff;
+        }
+        .loader{
+            font-weight: bold;
+            color: #3498db;
+            margin: 10px 0;
+        }
+        .error-msg{
+            color: #e74c3c;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .disabled-ui{
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <h1>City Information Portal</h1>
+        <nav>
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="weather.html" class="nav-link">Weather</a>
+            <a href="login.html" class="nav-link">Login</a>
+            <a href="admin.html" class="nav-link">Admin Dashboard</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Real-time Weather Forecast (React Component)</h2>
+        
+        <div id="react-root"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 City-Site Project</p>
+    </footer>
+
+    <script type="text/babel">
+
+        const cityCoordinates ={
+            kyiv: {lat: 50.4501, lon: 30.5234, name: 'Kyiv'},
+            kharkiv: {lat: 49.9935, lon: 36.2304, name: 'Kharkiv'},
+            dnipro: {lat: 48.4647, lon: 35.0462, name: 'Dnipro'}
+        };
+
+        function WeatherApp(){
+            const [city, setCity] = React.useState('kyiv');
+            const [weatherData, setWeatherData] = React.useState(null);
+            const [loading, setLoading] = React.useState(false);
+            const [error, setError] = React.useState(null);
+
+
+            const fetchWeather = async (selectedCity) =>{
+                setLoading(true);
+                setError(null);
+                
+                const {lat, lon} = cityCoordinates[selectedCity];
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+
+                try{
+                    const response = await fetch(url);
+                    if (!response.ok){
+                        throw new Error('Server response error');
+                    }
+                    const data = await response.json();
+                    
+                    const forecast =[];
+                    for(let i = 0; i < 3; i++){
+                        forecast.push({
+                            date: data.daily.time[i],
+                            maxTemp: data.daily.temperature_2m_max[i],
+                            minTemp: data.daily.temperature_2m_min[i]
+                        });
+                    }
+                    setWeatherData({cityName: cityCoordinates[selectedCity].name, forecast});
+                } catch (err){
+                    setError('Failed to load weather data. Please check connection.');
+                } finally{
+                    setLoading(false);
+                }
+            };
+
+            React.useEffect(() =>{
+                fetchWeather(city);
+            }, [city]);
+
+            return (
+                <div className="weather-widget">
+                    <h3>Select City</h3>
+                    
+
+                    <div className={loading ? "disabled-ui" : ""}>
+                        <select value={city} onChange={(e) => setCity(e.target.value)} style={{padding: '5px', fontSize: '16px'}}>
+                            <option value="kyiv">Kyiv</option>
+                            <option value="kharkiv">Kharkiv</option>
+                            <option value="dnipro">Dnipro</option>
+                        </select>
+                        <button onClick={() => fetchWeather(city)} style={{marginLeft: '10px', padding: '5px 10px'}}>Refresh</button>
+                    </div>
+
+                    {loading && <div className="loader">⏳ Fetching fresh JSON data from external API...</div>}
+
+                    {error && <div className="error-msg">❌ {error}</div>}
+
+                    {!loading && !error && weatherData &&(
+                        <div style={{marginTop: '15px'}}>
+                            <h4>3-Day Forecast for {weatherData.cityName}:</h4>
+                            <div className="forecast-container">
+                                {weatherData.forecast.map((day, index) => (
+                                    <div className="forecast-card" key={index}>
+                                        <strong>{day.date}</strong>
+                                        <p style={{color: '#e74c3c', margin: '5px 0'}}>Max: {day.maxTemp}°C</p>
+                                        <p style={{color: '#3498db', margin: '5px 0'}}>Min: {day.minTemp}°C</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('react-root'));
+        root.render(<WeatherApp />);
+    </script>
+</body>
+</html>
