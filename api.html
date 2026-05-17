@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>City-Site - REST API</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/react-router-dom@5.3.4/umd/react-router-dom.min.js"></script>
+</head>
+<body>
+    <header id="main-header">
+        <h1>REST API Dashboard</h1>
+        <nav>
+            <a href="/" class="nav-link">Home</a>
+            <a href="login.html" class="nav-link">Login</a>
+            <a href="/admin" class="nav-link">Admin Dashboard</a>
+            <a href="weather.html" class="nav-link">Weather</a>
+            <a href="api.html" class="nav-link">API Dashboard</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>React Client-Server</h2>
+        <div id="api-root"></div>
+    </main>
+
+    <script type="text/babel">
+        const {HashRouter, Route, Link, Switch} =ReactRouterDOM;
+
+        function CommentsComponent(){
+            const [comments, setComments] =React.useState([]);
+
+            const loadComments = async()=>{
+                const response = await fetch('/api/comments');
+                const result = await response.json();
+                setComments(result.data);
+            };
+
+            return(
+                <div>
+                    <h3>User Comments (Data from API)</h3>
+                    <button onClick={loadComments} style={{padding: '5px 10px', marginBottom: '10px'}}>
+                        Load Comments via AJAX
+                    </button>
+                    <ul>
+                        {comments.map((c, i)=><li key={i}>{c}</li>)}
+                    </ul>
+                </div>
+            );
+        }
+
+        function StatsComponent(){
+            const [stats, setStats] = React.useState(null);
+
+            React.useEffect(()=>{
+                fetch('/api/stats')
+                    .then(res =>res.json())
+                    .then(data =>setStats(data));
+            }, []);
+
+            return(
+                <div>
+                    <h3>Server Statistics</h3>
+                    {stats?(
+                        <pre style={{background: '#eee', padding: '10px'}}>
+                            {JSON.stringify(stats, null, 2)}
+                        </pre>
+                    ) : <p>Loading data...</p>}
+                </div>
+            );
+        }
+
+        function App(){
+            return(
+                <HashRouter>
+                    <div style={{border: '2px solid #2c3e50', padding: '20px', borderRadius: '5px'}}>
+                        <nav style={{marginBottom: '20px', borderBottom: '1px solid #ccc', paddingBottom: '10px'}}>
+                            <Link to="/" style={{marginRight: '15px', fontWeight: 'bold'}}>View Stats</Link>
+                            <Link to="/comments" style={{fontWeight: 'bold'}}>View Comments</Link>
+                        </nav>
+                        
+                        <Switch>
+                            <Route exact path="/" component={StatsComponent}/>
+                            <Route path="/comments" component={CommentsComponent}/>
+                        </Switch>
+                    </div>
+                </HashRouter>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('api-root'));
+        root.render(<App/>);
+    </script>
+</body>
+</html>

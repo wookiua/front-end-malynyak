@@ -62,6 +62,39 @@ app.get('/', (req, res) =>{
     res.send(htmlTemplate);
 });
 
+
+app.get('/', (req, res) =>{
+
+    const HomeSsrComponent = React.createElement('div', {style:{background: '#ffffff', padding: '10px', borderLeft: '4px solid #f0932b'}},
+        React.createElement('h3', null, 'Server Notice'),
+        React.createElement('p', null, 'This page was pre-rendered by React on the Node.js server!')
+    );
+
+    const ssrHtml = ReactDOMServer.renderToString(HomeSsrComponent);
+    let htmlTemplate = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+    htmlTemplate = htmlTemplate.replace('<div id="ssr-home-container"></div>', ssrHtml);
+    
+    res.send(htmlTemplate);
+});
+
+
+app.get('/api/comments', (req, res) =>{
+    let comments = [];
+    if (fs.existsSync('comments.txt')){
+        const fileData = fs.readFileSync('comments.txt', 'utf8');
+        comments = fileData.split('\n').filter(line => line.trim() !== '');
+    }
+    res.json({status: 'success', data: comments});
+});
+
+app.get('/api/stats', (req, res) =>{
+    res.json({activeUsers: 5, citiesInDatabase: 3, serverStatus: "Running"});
+});
+
+app.get('/api/time', (req, res) =>{
+    res.send(`<span style="color: blue;">Server time is: ${new Date().toLocaleTimeString()}</span>`);
+});
+
 app.listen(3000, () =>{
     console.log('Server is running! Open http://localhost:3000 in your browser.');
 });
